@@ -35,15 +35,27 @@ const MobileNav = () => {
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-[400px] h-16 bg-[#18181b] rounded-full flex justify-between items-center px-2 z-[900] md:hidden shadow-[0_10px_40px_rgba(0,0,0,0.8)] border border-white/5">
       {navItems.map((item) => {
-        // Since search isn't a real route, we don't show active bubble for it unless we map it to some state, but for now we just skip active state for search.
         const isActive = location.pathname === item.path && item.action === 'link' || (item.action === 'profile' && location.pathname === '/profile');
         
+        const handleItemClick = (e) => {
+          if (item.action === 'search') {
+            setIsSearchOpen(true);
+          } else if (item.action === 'profile') {
+            if (!isLoggedIn) {
+              openLoginModal();
+            } else {
+              navigate('/profile');
+            }
+          } else {
+            navigate(item.path);
+          }
+        };
+
         return (
-          <Link 
+          <button 
             key={item.name} 
-            to={item.path} 
-            onClick={(e) => handleNavClick(e, item)}
-            className="relative w-16 h-full flex flex-col items-center justify-center z-10"
+            onClick={handleItemClick}
+            className="relative w-16 h-full flex flex-col items-center justify-center z-10 focus:outline-none"
           >
             {isActive && (
               <motion.div
@@ -69,7 +81,7 @@ const MobileNav = () => {
             >
               {item.name}
             </motion.span>
-          </Link>
+          </button>
         );
       })}
     </div>

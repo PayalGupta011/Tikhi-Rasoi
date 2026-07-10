@@ -78,15 +78,18 @@ const Profile = () => {
         <div className="bg-[#111] rounded-[2.5rem] p-8 md:p-12 mb-10 shadow-2xl flex flex-col md:flex-row items-center gap-10 border border-white/5 relative overflow-hidden group hover:border-gold/20 transition-colors">
           <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-r from-primary/10 via-background to-gold/10"></div>
           
-          <div className="relative z-10 w-40 h-40 rounded-full border-[6px] border-[#0a0a0a] overflow-hidden shadow-[0_0_40px_rgba(212,175,55,0.2)] bg-black flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
-            <img src={isEditing ? formData.profileImage : user?.profileImage} alt="Profile" className="w-full h-full object-cover" />
-            
-            {isEditing && (
-              <label className="absolute inset-0 bg-black/60 flex items-center justify-center cursor-pointer opacity-0 hover:opacity-100 transition-opacity">
-                <FiEdit2 className="text-white text-3xl" />
-                <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-              </label>
-            )}
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="relative w-40 h-40 rounded-full border-[6px] border-[#0a0a0a] overflow-hidden shadow-[0_0_40px_rgba(212,175,55,0.2)] bg-black flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
+              <img src={isEditing ? formData.profileImage : user?.profileImage} alt="Profile" className="w-full h-full object-cover" />
+              
+              {isEditing && (
+                <label className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center cursor-pointer opacity-100 transition-opacity backdrop-blur-sm">
+                  <FiEdit2 className="text-white text-3xl mb-1" />
+                  <span className="text-white text-[10px] font-bold uppercase tracking-wider">Change Photo</span>
+                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                </label>
+              )}
+            </div>
           </div>
           
           <div className="relative z-10 text-center md:text-left flex-1">

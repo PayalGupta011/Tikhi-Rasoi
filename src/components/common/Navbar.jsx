@@ -18,7 +18,7 @@ const navLinks = [
 const Navbar = () => {
   const location = useLocation();
   const { isLoggedIn, user, logout, openLoginModal } = useAuth();
-  const { cartCount, setIsCartOpen } = useCart();
+  const { cartCount, setIsCartOpen, setIsSearchOpen } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -28,9 +28,15 @@ const Navbar = () => {
           <div className="flex justify-between items-center h-20 relative">
             
             {/* Logo Section */}
-            <div className="w-20 md:w-24 lg:w-28 flex-shrink-0 flex items-center justify-start h-full relative z-50">
-              <Link to="/" className="absolute top-4 md:top-5 bg-white p-1 rounded-full shadow-[0_8px_16px_rgba(0,0,0,0.15)] group transition-transform hover:scale-105 flex items-center justify-center border-2 border-white">
-                <img src="/logo.jpg" alt="Tikhi Rasoi Logo" className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-full mix-blend-multiply" />
+            <div className="md:w-24 lg:w-28 flex-shrink-0 flex items-center justify-start h-full relative z-50">
+              <Link to="/" className="flex items-center gap-2 group transition-transform hover:scale-[1.02]">
+                <div className="md:absolute md:top-4 lg:top-5 bg-white p-1 rounded-full shadow-lg flex items-center justify-center border-2 border-white relative z-10 w-14 h-14 md:w-20 md:h-20 lg:w-24 lg:h-24">
+                  <img src="/logo.jpg" alt="Tikhi Rasoi Logo" className="w-full h-full object-cover rounded-full mix-blend-multiply" />
+                </div>
+                <div className="flex flex-row md:hidden items-center gap-1.5 ml-1 whitespace-nowrap">
+                  <span className="font-heading font-black text-[1.15rem] text-primary uppercase tracking-wider drop-shadow-sm">Tikhi</span>
+                  <span className="font-heading font-black text-[1.15rem] text-black uppercase tracking-wider">Rasoi</span>
+                </div>
               </Link>
             </div>
 
@@ -56,15 +62,18 @@ const Navbar = () => {
 
             {/* Right Section (Button + Hamburger) */}
             <div className="flex-shrink-0 flex items-center justify-end gap-3 lg:gap-5">
+              
+              {/* Always visible on Desktop: Search Button */}
+              <button 
+                onClick={() => setIsSearchOpen(true)}
+                className="hidden md:flex relative text-gray-700 hover:text-primary transition-colors cursor-pointer"
+                title="Search Menu"
+              >
+                <FiSearch className="text-2xl" />
+              </button>
+
               {isLoggedIn ? (
                 <div className="hidden md:flex items-center justify-end gap-3 lg:gap-5">
-                  <button 
-                    onClick={() => setIsSearchOpen(true)}
-                    className="relative text-gray-700 hover:text-primary transition-colors cursor-pointer"
-                    title="Search Menu"
-                  >
-                    <FiSearch className="text-2xl" />
-                  </button>
                   <button 
                     onClick={() => setIsCartOpen(true)}
                     className="relative text-gray-700 hover:text-primary transition-colors cursor-pointer"
@@ -87,7 +96,7 @@ const Navbar = () => {
                   </button>
                 </div>
               ) : (
-                <div className="hidden md:flex justify-end w-full">
+                <div className="hidden md:flex items-center justify-end gap-3 lg:gap-5">
                   <button
                     onClick={openLoginModal}
                     className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-xl text-base font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/30 hover:shadow-primary/50"

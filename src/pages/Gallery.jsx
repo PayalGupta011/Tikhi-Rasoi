@@ -276,7 +276,7 @@ const Gallery = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 md:gap-6 w-full md:w-auto">
-              <Link to="/reservation" className="bg-gradient-to-r from-gold to-yellow-600 hover:from-yellow-500 hover:to-yellow-400 text-black px-8 py-4 md:py-5 rounded-xl text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-[0_0_30px_rgba(201,164,76,0.3)] hover:shadow-[0_0_40px_rgba(201,164,76,0.5)] transform hover:-translate-y-1">
+              <Link to="/contact" className="bg-gradient-to-r from-gold to-yellow-600 hover:from-yellow-500 hover:to-yellow-400 text-black px-8 py-4 md:py-5 rounded-xl text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-[0_0_30px_rgba(201,164,76,0.3)] hover:shadow-[0_0_40px_rgba(201,164,76,0.5)] transform hover:-translate-y-1">
                 <FaBuilding /> Reserve a Table
               </Link>
               <Link to="/contact" className="bg-transparent border border-gold/50 hover:border-gold hover:bg-gold/10 text-white px-8 py-4 md:py-5 rounded-xl text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-3 transition-all backdrop-blur-md cursor-pointer">
