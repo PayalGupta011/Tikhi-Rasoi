@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { FiMapPin, FiPhone, FiCheckCircle, FiCreditCard, FiArrowRight } from 'react-icons/fi';

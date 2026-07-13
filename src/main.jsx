@@ -6,6 +6,7 @@ import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
+import { FavoritesProvider } from './context/FavoritesContext'
 
 const queryClient = new QueryClient()
 
@@ -15,10 +16,13 @@ createRoot(document.getElementById('root')).render(
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <CartProvider>
-            <App />
+            <FavoritesProvider>
+              <App />
+            </FavoritesProvider>
           </CartProvider>
         </AuthProvider>
       </QueryClientProvider>
     </HelmetProvider>
   </StrictMode>,
 )
+

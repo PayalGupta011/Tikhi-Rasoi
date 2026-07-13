@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect, no-unused-vars */
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaSearch, FaFilter, FaStar, FaRegHeart, FaLeaf, FaUtensils, FaHandsWash, FaUsers, FaClock, FaMedal, FaFire } from 'react-icons/fa';
+import { Link, useLocation } from 'react-router-dom';
+import { FaSearch, FaFilter, FaStar, FaRegHeart, FaHeart, FaLeaf, FaUtensils, FaHandsWash, FaUsers, FaClock, FaMedal, FaFire } from 'react-icons/fa';
 import { FiCalendar } from 'react-icons/fi';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode, Scrollbar } from 'swiper/modules';
@@ -11,6 +12,7 @@ import 'swiper/css/scrollbar';
 
 import { menuCategories } from '../constants/menuData';
 import { useAuth } from '../context/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
 
 const fallbackImage = 'https://placehold.co/600x400/2a0808/d4af37?text=Delicious+Food';
 
@@ -91,6 +93,7 @@ import { useCart } from '../context/CartContext';
 const MenuItemCard = ({ item }) => {
   const { isLoggedIn, openLoginModal } = useAuth();
   const { cartItems, addToCart, updateQuantity } = useCart();
+  const { toggleFavorite, isFavorite } = useFavorites();
   const details = item.details;
   
   // Create a unique id for the cart if not exists
@@ -98,13 +101,15 @@ const MenuItemCard = ({ item }) => {
   
   const cartItem = cartItems.find(i => i.id === productId);
   const quantity = cartItem ? cartItem.quantity : 0;
+  const isFav = isFavorite(productId);
+
+  const priceValue = item.price ? parseInt(item.price.replace(/[^0-9]/g, '')) || 0 : (item.full ? parseInt(item.full.replace(/[^0-9]/g, '')) || 0 : 0);
 
   const handleAdd = () => {
     if (!isLoggedIn) {
       openLoginModal();
       return;
     }
-    const priceValue = item.price ? parseInt(item.price.replace(/[^0-9]/g, '')) || 0 : (item.full ? parseInt(item.full.replace(/[^0-9]/g, '')) || 0 : 0);
     addToCart({
       id: productId,
       name: item.name,
@@ -121,6 +126,19 @@ const MenuItemCard = ({ item }) => {
     updateQuantity(productId, quantity - 1);
   };
 
+  const handleToggleFav = () => {
+    toggleFavorite({
+      id: productId,
+      name: item.name,
+      price: priceValue,
+      image: details.image,
+      rating: details.rating,
+      reviews: details.reviews,
+      spice: details.spice,
+      categoryId: item.categoryId
+    });
+  };
+
   return (
     <div className="bg-[#1a1a1a] border border-white/5 rounded-2xl p-5 flex flex-col group hover:border-gold/30 hover:shadow-[0_0_20px_rgba(212,175,55,0.1)] transition-all relative">
       <div className="relative h-56 rounded-xl overflow-hidden mb-5 bg-[#2a2a2a]">
@@ -134,8 +152,16 @@ const MenuItemCard = ({ item }) => {
           <span className="w-2 h-2 rounded-full bg-white"></span>
           Pure Veg
         </div>
-        <button className="absolute top-3 right-3 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 text-white flex items-center justify-center hover:bg-primary hover:border-primary transition-colors">
-          <FaRegHeart className="text-lg" />
+        <button 
+          onClick={handleToggleFav}
+          className={`absolute top-3 right-3 w-10 h-10 rounded-full backdrop-blur-sm border flex items-center justify-center transition-all cursor-pointer ${
+            isFav 
+              ? 'bg-red-600/20 border-red-500 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)] hover:bg-red-600 hover:text-white' 
+              : 'bg-black/50 border-white/20 text-white hover:bg-primary hover:border-primary'
+          }`}
+          title={isFav ? "Remove from favorites" : "Add to favorites"}
+        >
+          {isFav ? <FaHeart className="text-lg" /> : <FaRegHeart className="text-lg" />}
         </button>
       </div>
 

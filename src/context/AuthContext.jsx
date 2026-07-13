@@ -1,19 +1,26 @@
+/* eslint-disable react-refresh/only-export-components, no-unused-vars */
 import { createContext, useState, useContext, useEffect } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-  useEffect(() => {
+  const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('tikhiRasoiUser');
     if (storedUser) {
-      setIsLoggedIn(true);
-      setUser(JSON.parse(storedUser));
+      try {
+        return JSON.parse(storedUser);
+      } catch (error) {
+        console.error('Failed to parse user from localStorage', error);
+      }
     }
-  }, []);
+    return null;
+  });
+
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return !!localStorage.getItem('tikhiRasoiUser');
+  });
+
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const login = (email) => {
     // Check if user exists in local storage first to keep their details

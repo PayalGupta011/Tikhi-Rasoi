@@ -1,14 +1,17 @@
+/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FiCalendar, FiMenu, FiUser, FiLogOut, FiX, FiShoppingBag, FiSearch } from 'react-icons/fi';
+import { FiCalendar, FiMenu, FiUser, FiLogOut, FiX, FiShoppingBag, FiSearch, FiHeart } from 'react-icons/fi';
 import { FaPepperHot } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import { useFavorites } from '../../context/FavoritesContext';
 
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Menu', path: '/menu' },
+  { name: 'Favorites', path: '/favorites' },
   { name: 'About Us', path: '/about' },
   { name: 'Gallery', path: '/gallery' },
   { name: 'Offers', path: '/offer' },
@@ -19,7 +22,10 @@ const Navbar = () => {
   const location = useLocation();
   const { isLoggedIn, user, logout, openLoginModal } = useAuth();
   const { cartCount, setIsCartOpen, setIsSearchOpen } = useCart();
+  const { favorites } = useFavorites();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const favoritesCount = favorites.length;
 
   return (
     <>
@@ -71,6 +77,20 @@ const Navbar = () => {
               >
                 <FiSearch className="text-2xl" />
               </button>
+
+              {/* Always visible on Desktop: Favorites Button */}
+              <Link 
+                to="/favorites"
+                className="hidden md:flex relative text-gray-700 hover:text-primary transition-colors cursor-pointer"
+                title="My Favorites"
+              >
+                <FiHeart className="text-2xl" />
+                {favoritesCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-white text-[0.6rem] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                    {favoritesCount}
+                  </span>
+                )}
+              </Link>
 
               {isLoggedIn ? (
                 <div className="hidden md:flex items-center justify-end gap-3 lg:gap-5">

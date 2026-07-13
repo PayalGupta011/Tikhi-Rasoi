@@ -1,11 +1,16 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { FiUser, FiMapPin, FiPhone, FiPackage, FiEdit2, FiSave, FiLogOut } from 'react-icons/fi';
+import { Navigate, Link } from 'react-router-dom';
+import { FiUser, FiMapPin, FiPhone, FiPackage, FiEdit2, FiSave, FiLogOut, FiHeart } from 'react-icons/fi';
+import { FaHeart, FaStar, FaFire } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
+import { useCart } from '../context/CartContext';
 
 const Profile = () => {
   const { isLoggedIn, user, updateProfile, logout } = useAuth();
+  const { favorites, toggleFavorite } = useFavorites();
+  const { cartItems, addToCart, updateQuantity } = useCart();
   
   const [activeTab, setActiveTab] = useState('details');
   const [isEditing, setIsEditing] = useState(false);
@@ -126,6 +131,16 @@ const Profile = () => {
             }`}
           >
             <FiPackage className="text-xl" /> Order History
+          </button>
+          <button 
+            onClick={() => setActiveTab('favorites')}
+            className={`flex items-center gap-3 px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all whitespace-nowrap shadow-lg ${
+              activeTab === 'favorites' 
+                ? 'bg-red-600 border-transparent text-white shadow-[0_10px_20px_rgba(220,38,38,0.4)]' 
+                : 'bg-[#111] border border-white/5 text-gray-400 hover:text-white hover:border-white/20'
+            }`}
+          >
+            <FiHeart className="text-xl" /> My Favorites
           </button>
         </div>
 
@@ -276,6 +291,87 @@ const Profile = () => {
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {activeTab === 'favorites' && (
+              <motion.div 
+                key="favorites"
+                initial={{ opacity: 0, x: -20 }} 
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
+                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-white flex items-center gap-3">
+                    <span className="w-3 h-3 rounded-full bg-red-500"></span> Saved Dishes
+                  </h2>
+                </div>
+
+                {favorites.length === 0 ? (
+                  <div className="text-center py-20 bg-black/20 rounded-3xl border border-white/5">
+                    <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6">
+                      <FiHeart className="text-4xl text-gray-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">No Favorites Yet</h3>
+                    <p className="text-gray-500 mb-6">You haven't added any dishes to your favorites list.</p>
+                    <Link 
+                      to="/menu"
+                      className="inline-block bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors shadow-lg shadow-primary/20 animate-fade-in"
+                    >
+                      Browse Menu
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {favorites.map((item) => {
+                      const productId = item.id;
+                      const cartItem = cartItems.find(c => c.id === productId);
+                      const quantity = cartItem ? cartItem.quantity : 0;
+
+                      return (
+                        <div key={item.id} className="bg-black/30 rounded-3xl p-5 border border-white/5 flex flex-col md:flex-row gap-5 relative overflow-hidden group hover:border-gold/20 transition-all">
+                          <div className="w-full md:w-32 h-32 rounded-2xl overflow-hidden bg-black/50 flex-shrink-0 relative">
+                            <img src={item.image || '/logo.jpg'} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <button 
+                              onClick={() => toggleFavorite(item)}
+                              className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm border border-red-500/20 text-red-500 flex items-center justify-center hover:bg-black transition-colors cursor-pointer"
+                            >
+                              <FaHeart className="text-sm" />
+                            </button>
+                          </div>
+                          <div className="flex-1 flex flex-col justify-between">
+                            <div>
+                              <h3 className="text-lg font-bold text-white mb-1 group-hover:text-gold transition-colors">{item.name}</h3>
+                              <div className="flex items-center gap-2 text-[10px] text-gray-400 mb-3">
+                                <span className="flex items-center gap-0.5 text-gold"><FaStar /> {item.rating || '4.8'}</span>
+                                <span className="w-1 h-1 rounded-full bg-gray-600"></span>
+                                <span className="flex items-center gap-0.5"><FaFire className="text-primary" /> {item.spice || 'Medium'}</span>
+                              </div>
+                            </div>
+                            <div className="flex justify-between items-center mt-2">
+                              <span className="text-gold font-bold text-lg">₹{item.price}</span>
+                              {quantity === 0 ? (
+                                <button 
+                                  onClick={() => addToCart({ id: productId, name: item.name, price: item.price, image: item.image })}
+                                  className="bg-primary/10 border border-primary hover:bg-primary text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors shadow-lg shadow-primary/20 cursor-pointer"
+                                >
+                                  Add +
+                                </button>
+                              ) : (
+                                <div className="flex items-center gap-3 bg-primary text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-lg shadow-primary/20">
+                                  <button onClick={() => updateQuantity(productId, quantity - 1)} className="w-5 h-5 flex items-center justify-center hover:bg-black/20 rounded-full transition-colors cursor-pointer">-</button>
+                                  <span className="w-3 text-center">{quantity}</span>
+                                  <button onClick={() => updateQuantity(productId, quantity + 1)} className="w-5 h-5 flex items-center justify-center hover:bg-black/20 rounded-full transition-colors cursor-pointer">+</button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </motion.div>

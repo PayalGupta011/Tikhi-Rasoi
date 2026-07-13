@@ -12,6 +12,7 @@ const Contact = lazy(() => import('../pages/Contact'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 const Profile = lazy(() => import('../pages/Profile'));
 const Checkout = lazy(() => import('../pages/Checkout'));
+const Favorites = lazy(() => import('../pages/Favorites'));
 
 const AppRoutes = () => {
   return (
@@ -26,6 +27,7 @@ const AppRoutes = () => {
           <Route path="contact" element={<Contact />} />
           <Route path="profile" element={<Profile />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="favorites" element={<Favorites />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

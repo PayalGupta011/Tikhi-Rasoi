@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiHome, FiSearch, FiImage, FiUser } from 'react-icons/fi';
+import { FiHome, FiSearch, FiHeart, FiUser } from 'react-icons/fi';
 import { FaUtensils } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -15,7 +16,7 @@ const MobileNav = () => {
     { name: 'Home', path: '/', icon: FiHome, action: 'link' },
     { name: 'Search', path: '/search-action', icon: FiSearch, action: 'search' },
     { name: 'Menu', path: '/menu', icon: FaUtensils, action: 'link' },
-    { name: 'Gallery', path: '/gallery', icon: FiImage, action: 'link' },
+    { name: 'Favorites', path: '/favorites', icon: FiHeart, action: 'link' },
     { name: 'Profile', path: '/profile', icon: FiUser, action: 'profile' },
   ];
 

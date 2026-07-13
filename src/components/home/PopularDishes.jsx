@@ -1,4 +1,8 @@
-import { FaStar, FaRegHeart } from 'react-icons/fa';
+import { FaStar, FaRegHeart, FaHeart } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useFavorites } from '../../context/FavoritesContext';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 
 const dishes = [
   {
@@ -49,6 +53,11 @@ const dishes = [
 ];
 
 const PopularDishes = () => {
+  const navigate = useNavigate();
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const { cartItems, addToCart, updateQuantity } = useCart();
+  const { isLoggedIn, openLoginModal } = useAuth();
+
   return (
     <div className="bg-secondary py-16 border-t border-cards">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,51 +68,107 @@ const PopularDishes = () => {
             <h2 className="text-3xl font-heading font-bold text-white uppercase tracking-wider mb-2">Popular Dishes</h2>
             <div className="h-[2px] w-16 bg-gold"></div>
           </div>
-          <button className="border border-gray-text/50 text-gray-text hover:text-white hover:border-white px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-colors">
+          <button 
+            onClick={() => navigate('/menu')}
+            className="border border-gray-text/50 text-gray-text hover:text-white hover:border-white px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+          >
             View All Menu
           </button>
         </div>
 
         {/* Dishes Grid/Slider */}
         <div className="flex overflow-x-auto pb-6 hide-scrollbar gap-6">
-          {dishes.map((dish) => (
-            <div key={dish.id} className="min-w-[260px] max-w-[260px] bg-cards rounded-xl overflow-hidden shadow-lg border border-gray-text/10 group">
-              {/* Image Section */}
-              <div className="relative h-48 overflow-hidden">
-                <img 
-                  src={dish.image} 
-                  alt={dish.name} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute top-3 left-3 bg-veg/90 backdrop-blur-sm text-white text-[0.6rem] font-bold px-2 py-1 rounded flex items-center gap-1 uppercase tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-white"></span>
-                  Pure Veg
-                </div>
-                <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-primary transition-colors">
-                  <FaRegHeart />
-                </button>
-              </div>
+          {dishes.map((dish) => {
+            const productId = dish.name.replace(/\s+/g, '-').toLowerCase();
+            const isFav = isFavorite(productId);
+            const cartItem = cartItems.find(item => item.id === productId);
+            const quantity = cartItem ? cartItem.quantity : 0;
 
-              {/* Content Section */}
-              <div className="p-4">
-                <h3 className="font-heading font-bold text-white text-lg mb-1 truncate">{dish.name}</h3>
-                
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar key={i} className={`text-[0.6rem] ${i < dish.rating ? 'text-gold' : 'text-gray-600'}`} />
-                  ))}
-                  <span className="text-[0.6rem] text-gray-400 ml-1">({dish.reviews})</span>
-                </div>
+            const handleToggleFav = () => {
+              toggleFavorite({
+                id: productId,
+                name: dish.name,
+                price: dish.price,
+                image: dish.image,
+                rating: String(dish.rating),
+                reviews: `(${dish.reviews})`,
+                spice: 'Medium'
+              });
+            };
 
-                <div className="flex justify-between items-center mt-auto">
-                  <span className="text-gold font-bold text-xl">₹{dish.price}</span>
-                  <button className="bg-primary hover:bg-primary-dark text-white px-3 py-1 rounded text-xs font-bold uppercase tracking-wider transition-colors">
-                    Add +
+            const handleAddToCart = () => {
+              if (!isLoggedIn) {
+                openLoginModal();
+                return;
+              }
+              addToCart({
+                id: productId,
+                name: dish.name,
+                price: parseInt(dish.price),
+                image: dish.image
+              });
+            };
+
+            return (
+              <div key={dish.id} className="min-w-[260px] max-w-[260px] bg-cards rounded-xl overflow-hidden shadow-lg border border-gray-text/10 group flex flex-col justify-between">
+                {/* Image Section */}
+                <div className="relative h-48 overflow-hidden bg-[#2a2a2a] flex-shrink-0">
+                  <img 
+                    src={dish.image} 
+                    alt={dish.name} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 bg-veg/90 backdrop-blur-sm text-white text-[0.6rem] font-bold px-2 py-1 rounded flex items-center gap-1 uppercase tracking-wider">
+                    <span className="w-2 h-2 rounded-full bg-white"></span>
+                    Pure Veg
+                  </div>
+                  <button 
+                    onClick={handleToggleFav}
+                    className={`absolute top-3 right-3 w-8 h-8 rounded-full backdrop-blur-sm flex items-center justify-center transition-all cursor-pointer ${
+                      isFav 
+                        ? 'bg-red-600/20 border border-red-500 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)] hover:bg-red-600 hover:text-white' 
+                        : 'bg-black/50 border border-white/20 text-white hover:bg-primary hover:border-primary'
+                    }`}
+                  >
+                    {isFav ? <FaHeart /> : <FaRegHeart />}
                   </button>
                 </div>
+
+                {/* Content Section */}
+                <div className="p-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-heading font-bold text-white text-lg mb-1 truncate group-hover:text-gold transition-colors">{dish.name}</h3>
+                    
+                    <div className="flex items-center gap-1 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar key={i} className={`text-[0.6rem] ${i < dish.rating ? 'text-gold' : 'text-gray-600'}`} />
+                      ))}
+                      <span className="text-[0.6rem] text-gray-400 ml-1">({dish.reviews})</span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center mt-auto">
+                    <span className="text-gold font-bold text-xl">₹{dish.price}</span>
+                    
+                    {quantity === 0 ? (
+                      <button 
+                        onClick={handleAddToCart}
+                        className="bg-primary hover:bg-primary-dark text-white px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                      >
+                        Add +
+                      </button>
+                    ) : (
+                      <div className="flex items-center gap-2 bg-primary text-white px-2 py-1 rounded text-xs font-bold shadow-lg shadow-primary/20">
+                        <button onClick={() => updateQuantity(productId, quantity - 1)} className="w-5 h-5 flex items-center justify-center hover:bg-black/20 rounded-full transition-colors cursor-pointer">-</button>
+                        <span className="w-3 text-center">{quantity}</span>
+                        <button onClick={() => updateQuantity(productId, quantity + 1)} className="w-5 h-5 flex items-center justify-center hover:bg-black/20 rounded-full transition-colors cursor-pointer">+</button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
       </div>
