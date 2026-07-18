@@ -69,7 +69,7 @@ const PopularDishes = () => {
             <div className="h-[2px] w-16 bg-gold"></div>
           </div>
           <button 
-            onClick={() => navigate('/menu')}
+            onClick={() => navigate('/menu?filter=Most Popular')}
             className="border border-gray-text/50 text-gray-text hover:text-white hover:border-white px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
           >
             View All Menu

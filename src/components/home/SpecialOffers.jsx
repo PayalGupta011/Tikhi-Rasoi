@@ -7,7 +7,7 @@ const SpecialOffers = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Offer 1 */}
-          <Link to="/menu" className="bg-gradient-to-r from-primary-dark to-primary rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden shadow-xl text-white group cursor-pointer hover:-translate-y-2 transition-transform">
+          <Link to="/offer" className="bg-gradient-to-r from-primary-dark to-primary rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden shadow-xl text-white group cursor-pointer hover:-translate-y-2 transition-transform">
             <div className="relative z-10 w-2/3">
               <h3 className="text-4xl font-heading font-bold mb-2">20% <span className="text-xl">OFF</span></h3>
               <p className="text-xs tracking-wider uppercase font-bold mb-4 text-gold-soft">On Family Combo</p>
@@ -23,7 +23,7 @@ const SpecialOffers = () => {
           </Link>
 
           {/* Offer 2 */}
-          <Link to="/menu" className="bg-white rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden shadow-xl text-black border border-gray-100 group cursor-pointer hover:-translate-y-2 transition-transform">
+          <Link to="/offer" className="bg-white rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden shadow-xl text-black border border-gray-100 group cursor-pointer hover:-translate-y-2 transition-transform">
             <div className="relative z-10 w-2/3">
               <h3 className="text-3xl font-heading font-bold mb-2 text-primary">FREE <span className="text-xl text-black">DESSERT</span></h3>
               <p className="text-xs tracking-wider uppercase font-bold mb-4 text-gray-500">On order above ₹999</p>

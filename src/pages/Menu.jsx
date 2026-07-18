@@ -48,10 +48,43 @@ const getHash = (str) => {
   return Math.abs(hash);
 };
 
+const getDishDescription = (name) => {
+  const lower = name.toLowerCase();
+  if (lower.includes('paneer butter masala')) {
+    return "Rich, creamy & buttery delightful gravy.";
+  }
+  if (lower.includes('tikka') || lower.includes('kabab') || lower.includes('chaap')) {
+    return "Smoky, succulent tandoori delights grilled with rich spices.";
+  }
+  if (lower.includes('pizza')) {
+    return "Wood-fired crust with rich tomato sauce & melted cheese.";
+  }
+  if (lower.includes('noodle') || lower.includes('chinese') || lower.includes('manchurian') || lower.includes('rice')) {
+    return "Authentic Chinese flavors tossed with fresh garden vegetables.";
+  }
+  if (lower.includes('burger')) {
+    return "Crispy golden patty topped with fresh cheese & signature sauces.";
+  }
+  if (lower.includes('shake') || lower.includes('mocktail') || lower.includes('coffee')) {
+    return "Refreshing blended beverages made with premium flavors.";
+  }
+  if (lower.includes('maggie')) {
+    return "A perfect bowl of comforting noodles cooked with special spices.";
+  }
+  if (lower.includes('pasta')) {
+    return "Creamy and delicious pasta tossed in authentic Italian sauce.";
+  }
+  if (lower.includes('brownie') || lower.includes('cake') || lower.includes('dessert')) {
+    return "Decadent sweet treats cooked to perfection.";
+  }
+  return "A signature pure veg delicacy cooked with traditional spices.";
+};
+
 const getRandomItemDetails = (item, categoryId) => {
   const ratings = ['4.8', '4.7', '4.6', '4.9', '4.5'];
   const reviews = ['(120)', '(98)', '(75)', '(88)', '(110)', '(65)'];
   const spiceLevels = ['Medium', 'Spicy', 'Mild'];
+  const prepTimes = ['15-20 Min', '20-25 Min', '25-30 Min', '10-15 Min'];
   
   const hash = getHash(item.name);
   let imgIndex = hash % foodImages.length;
@@ -74,6 +107,7 @@ const getRandomItemDetails = (item, categoryId) => {
     rating: ratings[hash % ratings.length],
     reviews: reviews[hash % reviews.length],
     spice: spiceLevels[hash % spiceLevels.length],
+    prepTime: prepTimes[hash % prepTimes.length]
   };
 };
 
@@ -139,54 +173,89 @@ const MenuItemCard = ({ item }) => {
     });
   };
 
+  const getBadge = () => {
+    if (parseFloat(details.rating) >= 4.8) {
+      return { text: 'BESTSELLER', bg: 'bg-[#f2e2cf]', textClass: 'text-[#8c5a2b]' };
+    } else if (details.spice === 'Spicy') {
+      return { text: 'HOT & SPICY', bg: 'bg-red-100', textClass: 'text-red-700' };
+    } else {
+      return { text: 'POPULAR', bg: 'bg-blue-100', textClass: 'text-blue-700' };
+    }
+  };
+  const badge = getBadge();
+
   return (
-    <div className="bg-[#1a1a1a] border border-white/5 rounded-2xl p-5 flex flex-col group hover:border-gold/30 hover:shadow-[0_0_20px_rgba(212,175,55,0.1)] transition-all relative">
-      <div className="relative h-56 rounded-xl overflow-hidden mb-5 bg-[#2a2a2a]">
+    <div className="bg-gradient-to-br from-[#ffffff] to-[#f5f6f9] border border-[#e2e2e8] rounded-[2.2rem] p-5 pt-6 flex flex-col group hover:shadow-[0_15px_35px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 relative overflow-visible mt-6 w-full">
+      {/* Absolute Overlapping Image */}
+      <div className="absolute -top-6 -left-3 sm:-left-5 w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-white shadow-[0_8px_25px_rgba(0,0,0,0.12)] z-20 bg-white">
         <img 
           src={details.image} 
           alt={item.name} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => { e.target.src = fallbackImage; }}
         />
-        <div className="absolute top-3 left-3 bg-green-600/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5 uppercase tracking-wider shadow-lg">
-          <span className="w-2 h-2 rounded-full bg-white"></span>
-          Pure Veg
-        </div>
-        <button 
-          onClick={handleToggleFav}
-          className={`absolute top-3 right-3 w-10 h-10 rounded-full backdrop-blur-sm border flex items-center justify-center transition-all cursor-pointer ${
-            isFav 
-              ? 'bg-red-600/20 border-red-500 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)] hover:bg-red-600 hover:text-white' 
-              : 'bg-black/50 border-white/20 text-white hover:bg-primary hover:border-primary'
-          }`}
-          title={isFav ? "Remove from favorites" : "Add to favorites"}
-        >
-          {isFav ? <FaHeart className="text-lg" /> : <FaRegHeart className="text-lg" />}
-        </button>
       </div>
 
-      <div className="flex justify-between items-start mb-3">
-        <h3 className="font-heading font-bold text-white text-xl md:text-2xl group-hover:text-gold transition-colors leading-tight">{item.name}</h3>
-      </div>
-      
-      <div className="flex items-center gap-3 text-sm text-gray-400 mb-5">
-        <div className="flex items-center gap-1 text-gold font-bold">
-          <FaStar /> {details.rating} <span className="text-gray-500 font-normal">{details.reviews}</span>
-        </div>
-        <span className="w-1.5 h-1.5 rounded-full bg-gray-600"></span>
-        <div className="flex items-center gap-1">
-          <FaFire className="text-primary" /> {details.spice}
+      {/* Heart Button */}
+      <button 
+        onClick={handleToggleFav}
+        className={`absolute top-4 right-4 w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center transition-all cursor-pointer z-30 shadow-sm ${
+          isFav 
+            ? 'bg-red-50 border-red-200 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.15)] hover:bg-red-100' 
+            : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+        }`}
+        title={isFav ? "Remove from favorites" : "Add to favorites"}
+      >
+        {isFav ? <FaHeart className="text-sm sm:text-base" /> : <FaRegHeart className="text-sm sm:text-base" />}
+      </button>
+
+      {/* Top Half Layout */}
+      <div className="flex gap-4 min-h-[90px] sm:min-h-[110px] md:min-h-[125px] mb-2">
+        {/* Left spacer to clear the overlapping image */}
+        <div className="w-[95px] sm:w-[115px] md:w-[130px] flex-shrink-0" />
+        
+        {/* Right Content */}
+        <div className="flex-1 flex flex-col items-start pt-1 sm:pt-2">
+          {/* Badge */}
+          <div className={`${badge.bg} ${badge.textClass} text-[8px] sm:text-[9px] font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md uppercase tracking-wider mb-1.5 flex items-center gap-1 w-max`}>
+            <span className="text-[6px] sm:text-[7px]">◆</span> {badge.text}
+          </div>
+          
+          {/* Title */}
+          <h3 className="font-heading font-black text-gray-900 text-base sm:text-lg md:text-xl leading-tight group-hover:text-primary transition-colors duration-300">
+            {item.name}
+          </h3>
         </div>
       </div>
 
-      <div className="flex justify-between items-end mt-auto">
+      {/* Description */}
+      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-4 mt-2 min-h-[36px] line-clamp-2">
+        {getDishDescription(item.name)}
+      </p>
+
+      {/* Rating & Prep Time Info */}
+      <div className="flex items-center gap-3 text-[11px] sm:text-xs text-gray-500 mb-5 border-t border-b border-gray-100 py-3 w-full justify-between">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[#f5a623] text-sm sm:text-base">★</span>
+          <span className="text-gray-800 font-extrabold">{details.rating}</span>
+          <span className="text-gray-400 font-normal">{details.reviews}</span>
+        </div>
+        <span className="text-gray-200">|</span>
+        <div className="flex items-center gap-1.5 text-gray-600 font-medium">
+          <FaClock className="text-gray-400 text-[11px] sm:text-xs" />
+          <span>{details.prepTime || '20-25 Min'}</span>
+        </div>
+      </div>
+
+      {/* Price & Add Button */}
+      <div className="flex justify-between items-center mt-auto pt-1">
         <div className="flex flex-col">
           {item.price ? (
-            <span className="text-gold font-bold text-2xl">{item.price}</span>
+            <span className="text-[#9c1c1c] font-heading font-black text-2xl sm:text-3xl">{item.price}</span>
           ) : (
-            <div className="flex gap-5">
-              <span className="text-gray-400 text-sm flex flex-col">Full <span className="text-gold font-bold text-xl">{item.full}</span></span>
-              {item.half && <span className="text-gray-400 text-sm flex flex-col">Half <span className="text-white font-bold text-xl">{item.half}</span></span>}
+            <div className="flex gap-3">
+              <span className="text-gray-500 text-[9px] flex flex-col font-bold uppercase tracking-wider leading-none">Full <span className="text-[#9c1c1c] font-black text-base sm:text-lg mt-0.5">{item.full}</span></span>
+              {item.half && <span className="text-gray-500 text-[9px] flex flex-col font-bold uppercase tracking-wider leading-none">Half <span className="text-gray-700 font-black text-base sm:text-lg mt-0.5">{item.half}</span></span>}
             </div>
           )}
         </div>
@@ -194,15 +263,15 @@ const MenuItemCard = ({ item }) => {
         {quantity === 0 ? (
           <button 
             onClick={handleAdd}
-            className="bg-primary/10 border border-primary hover:bg-primary text-white px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wider transition-colors shadow-lg shadow-primary/20"
+            className="bg-[#9c1c1c] hover:bg-[#801616] text-white px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-xs sm:text-sm font-extrabold uppercase tracking-wider transition-all shadow-md shadow-red-900/10 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
           >
             Add +
           </button>
         ) : (
-          <div className="flex items-center gap-4 bg-primary text-white px-3 py-1.5 rounded-full text-base font-bold shadow-lg shadow-primary/20">
-            <button onClick={handleDecrease} className="w-7 h-7 flex items-center justify-center hover:bg-black/20 rounded-full transition-colors">-</button>
-            <span className="w-5 text-center">{quantity}</span>
-            <button onClick={handleIncrease} className="w-7 h-7 flex items-center justify-center hover:bg-black/20 rounded-full transition-colors">+</button>
+          <div className="flex items-center gap-3 bg-[#9c1c1c] text-white px-3 py-1.5 rounded-full text-sm sm:text-base font-extrabold shadow-md">
+            <button onClick={handleDecrease} className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors cursor-pointer">-</button>
+            <span className="w-4 sm:w-5 text-center">{quantity}</span>
+            <button onClick={handleIncrease} className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors cursor-pointer">+</button>
           </div>
         )}
       </div>
@@ -220,12 +289,25 @@ const Menu = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.state && location.state.category) {
+    const queryParams = new URLSearchParams(location.search);
+    const categoryParam = queryParams.get('category');
+    const filterParam = queryParams.get('filter');
+
+    if (categoryParam) {
+      setActiveCategory(categoryParam);
+      setSearchQuery('');
+      setActiveSubFilter('All');
+    } else if (location.state && location.state.category) {
       setActiveCategory(location.state.category);
       setSearchQuery('');
       setActiveSubFilter('All');
     }
-  }, [location.state]);
+
+    if (filterParam) {
+      setActiveSubFilter(filterParam);
+      setSearchQuery('');
+    }
+  }, [location.search, location.state]);
 
   const handleOrderNow = () => {
     if (!isLoggedIn) {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaHeart, FaStar, FaFileAlt, FaUsers, FaLeaf, FaPepperHot } from 'react-icons/fa';
+import { FaHeart, FaRegHeart, FaStar, FaFileAlt, FaUsers, FaLeaf, FaPepperHot, FaClock } from 'react-icons/fa';
 import { FiArrowLeft, FiShoppingCart, FiX } from 'react-icons/fi';
 import { useFavorites } from '../context/FavoritesContext';
 import { useCart } from '../context/CartContext';
@@ -402,12 +402,12 @@ const Favorites = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.8, y: 30 }}
                         transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                        className="bg-[#1a1a1a] border border-white/5 rounded-2xl p-5 flex flex-col group hover:border-gold/30 hover:shadow-[0_0_20px_rgba(212,175,55,0.1)] transition-all relative"
+                        className="bg-gradient-to-br from-[#ffffff] to-[#f5f6f9] border border-[#e2e2e8] rounded-[2.2rem] p-5 pt-6 flex flex-col group hover:shadow-[0_15px_35px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 relative overflow-visible mt-6 w-full"
                       >
-                        {/* Image Section */}
+                        {/* Absolute Overlapping Image */}
                         <div 
                           onClick={() => handleCardClick(item)}
-                          className="relative h-52 rounded-xl overflow-hidden mb-5 bg-[#2a2a2a] cursor-pointer"
+                          className="absolute -top-6 -left-3 sm:-left-5 w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-white shadow-[0_8px_25px_rgba(0,0,0,0.12)] z-20 bg-white cursor-pointer"
                         >
                           <img 
                             src={item.image || fallbackImage} 
@@ -415,52 +415,89 @@ const Favorites = () => {
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             onError={(e) => { e.target.src = fallbackImage; }}
                           />
-                          <div className="absolute top-3 left-3 bg-green-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1.5 rounded flex items-center gap-1.5 uppercase tracking-wider shadow-lg">
-                            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-                            Pure Veg
-                          </div>
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation(); // Stop parent click
-                              toggleFavorite(item);
-                            }}
-                            className="absolute top-3 right-3 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-red-500/40 text-red-500 flex items-center justify-center hover:bg-black/90 hover:scale-110 transition-all cursor-pointer z-10"
-                            title="Remove from favorites"
-                          >
-                            <FaHeart className="text-lg" />
-                          </button>
                         </div>
 
-                        {/* Content Section */}
-                        <h3 
-                          onClick={() => handleCardClick(item)}
-                          className="font-heading font-bold text-white text-lg group-hover:text-gold transition-colors leading-tight mb-2 truncate cursor-pointer"
+                        {/* Heart Button */}
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFavorite(item);
+                          }}
+                          className="absolute top-4 right-4 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white border border-gray-200 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.15)] hover:bg-red-50 flex items-center justify-center transition-all cursor-pointer z-30"
+                          title="Remove from favorites"
                         >
-                          {item.name}
-                        </h3>
-                        
-                        <div className="flex items-center gap-3 text-xs text-gray-400 mb-6">
-                          <div className="flex items-center gap-1 text-gold font-bold">
-                            <FaStar /> {item.rating || '4.8'} <span className="text-gray-500 font-normal">{item.reviews || '(120)'}</span>
+                          <FaHeart className="text-sm sm:text-base" />
+                        </button>
+
+                        {/* Top Half Layout */}
+                        <div className="flex gap-4 min-h-[90px] sm:min-h-[110px] md:min-h-[125px] mb-2">
+                          {/* Left spacer to clear the overlapping image */}
+                          <div className="w-[95px] sm:w-[115px] md:w-[130px] flex-shrink-0" />
+                          
+                          {/* Right Content */}
+                          <div className="flex-1 flex flex-col items-start pt-1 sm:pt-2">
+                            {/* Badge */}
+                            {(() => {
+                              const ratingVal = parseFloat(item.rating || '4.8');
+                              const isSpicy = item.spice === 'Spicy';
+                              const badgeText = ratingVal >= 4.8 ? 'BESTSELLER' : (isSpicy ? 'HOT & SPICY' : 'POPULAR');
+                              const badgeBg = ratingVal >= 4.8 ? 'bg-[#f2e2cf]' : (isSpicy ? 'bg-red-100' : 'bg-blue-100');
+                              const badgeTextClass = ratingVal >= 4.8 ? 'text-[#8c5a2b]' : (isSpicy ? 'text-red-700' : 'text-blue-700');
+                              
+                              return (
+                                <div className={`${badgeBg} ${badgeTextClass} text-[8px] sm:text-[9px] font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md uppercase tracking-wider mb-1.5 flex items-center gap-1 w-max`}>
+                                  <span className="text-[6px] sm:text-[7px]">◆</span> {badgeText}
+                                </div>
+                              );
+                            })()}
+                            
+                            {/* Title */}
+                            <h3 
+                              onClick={() => handleCardClick(item)}
+                              className="font-heading font-black text-gray-900 text-base sm:text-lg md:text-xl leading-tight group-hover:text-primary transition-colors duration-300 cursor-pointer"
+                            >
+                              {item.name}
+                            </h3>
                           </div>
                         </div>
 
-                        {/* Bottom Actions */}
-                        <div className="flex justify-between items-center mt-auto pt-2 border-t border-white/5">
-                          <span className="text-gold font-bold text-xl">₹{item.price}</span>
+                        {/* Description */}
+                        <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-4 mt-2 min-h-[36px] line-clamp-2">
+                          {getDishDescription(item.name)}
+                        </p>
+
+                        {/* Rating & Prep Time Info */}
+                        <div className="flex items-center gap-3 text-[11px] sm:text-xs text-gray-500 mb-5 border-t border-b border-gray-100 py-3 w-full justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[#f5a623] text-sm sm:text-base">★</span>
+                            <span className="text-gray-800 font-extrabold">{item.rating || '4.8'}</span>
+                            <span className="text-gray-400 font-normal">{item.reviews || '(120)'}</span>
+                          </div>
+                          <span className="text-gray-200">|</span>
+                          <div className="flex items-center gap-1.5 text-gray-600 font-medium">
+                            <FaClock className="text-gray-400 text-[11px] sm:text-xs" />
+                            <span>{item.prepTime || '20-25 Min'}</span>
+                          </div>
+                        </div>
+
+                        {/* Price & Add Button */}
+                        <div className="flex justify-between items-center mt-auto pt-1">
+                          <div className="flex flex-col">
+                            <span className="text-[#9c1c1c] font-heading font-black text-2xl sm:text-3xl">₹{item.price}</span>
+                          </div>
                           
                           {quantity === 0 ? (
                             <button 
                               onClick={() => handleCardClick(item)}
-                              className="bg-primary/10 border border-primary hover:bg-primary text-white px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors shadow-lg shadow-primary/20 cursor-pointer flex items-center gap-1.5"
+                              className="bg-[#9c1c1c] hover:bg-[#801616] text-white px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-xs sm:text-sm font-extrabold uppercase tracking-wider transition-all shadow-md shadow-red-900/10 hover:shadow-lg hover:scale-[1.02] cursor-pointer flex items-center gap-1.5"
                             >
-                              <FiShoppingCart /> Add +
+                              <FiShoppingCart className="text-xs sm:text-sm" /> Add +
                             </button>
                           ) : (
-                            <div className="flex items-center gap-3 bg-primary text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg shadow-primary/20">
-                              <button onClick={() => updateQuantity(productId, quantity - 1)} className="w-5 h-5 flex items-center justify-center hover:bg-black/20 rounded-full transition-colors cursor-pointer">-</button>
-                              <span className="w-4 text-center">{quantity}</span>
-                              <button onClick={() => updateQuantity(productId, quantity + 1)} className="w-5 h-5 flex items-center justify-center hover:bg-black/20 rounded-full transition-colors cursor-pointer">+</button>
+                            <div className="flex items-center gap-3 bg-[#9c1c1c] text-white px-3 py-1.5 rounded-full text-sm sm:text-base font-extrabold shadow-md">
+                              <button onClick={() => updateQuantity(productId, quantity - 1)} className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors cursor-pointer">-</button>
+                              <span className="w-4 sm:w-5 text-center">{quantity}</span>
+                              <button onClick={() => updateQuantity(productId, quantity + 1)} className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors cursor-pointer">+</button>
                             </div>
                           )}
                         </div>

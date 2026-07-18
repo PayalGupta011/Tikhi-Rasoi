@@ -33,7 +33,7 @@ const MenuCategories = () => {
           {categories.map((cat, idx) => (
             <div 
               key={idx} 
-              onClick={() => navigate('/menu', { state: { category: cat.id } })}
+              onClick={() => navigate(`/menu?category=${cat.id}`, { state: { category: cat.id } })}
               className="flex flex-col items-center gap-4 min-w-[100px] cursor-pointer group"
             >
               <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-white border-2 border-gray-100 shadow-lg overflow-hidden flex items-center justify-center group-hover:border-primary group-hover:shadow-[0_0_20px_rgba(181,31,31,0.4)] transition-all duration-300 group-hover:-translate-y-2 relative">

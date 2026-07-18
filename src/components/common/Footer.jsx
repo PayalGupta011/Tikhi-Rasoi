@@ -36,12 +36,12 @@ const Footer = () => {
           <div className="flex flex-col items-center md:items-start">
             <h3 className="font-heading font-bold text-lg mb-6 uppercase tracking-wider">Our Menu</h3>
             <ul className="space-y-3 text-sm text-gray-700">
-              <li><Link to="/menu" className="hover:text-primary transition-colors">Pizza</Link></li>
-              <li><Link to="/menu" className="hover:text-primary transition-colors">Chinese</Link></li>
-              <li><Link to="/menu" className="hover:text-primary transition-colors">Main Course</Link></li>
-              <li><Link to="/menu" className="hover:text-primary transition-colors">Tandoor</Link></li>
-              <li><Link to="/menu" className="hover:text-primary transition-colors">Salads</Link></li>
-              <li><Link to="/menu" className="hover:text-primary transition-colors">Shakes & Beverages</Link></li>
+              <li><Link to="/menu?category=wood-fire-pizza" className="hover:text-primary transition-colors">Pizza</Link></li>
+              <li><Link to="/menu?category=chinese" className="hover:text-primary transition-colors">Chinese</Link></li>
+              <li><Link to="/menu?category=veg-main-course" className="hover:text-primary transition-colors">Main Course</Link></li>
+              <li><Link to="/menu?category=tandoor-specials" className="hover:text-primary transition-colors">Tandoor</Link></li>
+              <li><Link to="/menu?category=veg-main-course" className="hover:text-primary transition-colors">Salads</Link></li>
+              <li><Link to="/menu?category=shakes" className="hover:text-primary transition-colors">Shakes & Beverages</Link></li>
             </ul>
           </div>
 
@@ -62,7 +62,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-3">
                 <FiMail className="text-primary mt-1 text-lg flex-shrink-0" />
-                <p>tikhi.mirchi.restro@gmail.com</p>
+                <a href="mailto:thethundercafe2210@gmail.com" className="hover:text-primary transition-colors">thethundercafe2210@gmail.com</a>
               </li>
             </ul>
           </div>
@@ -71,7 +71,7 @@ const Footer = () => {
           <div className="flex flex-col items-center md:items-start">
             <h3 className="font-heading font-bold text-lg mb-6 uppercase tracking-wider">Follow Us</h3>
             <div className="flex gap-4 mb-8">
-              <a href="#" className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center hover:-translate-y-1 transition-transform">
+              <a href="https://www.facebook.com/people/Tikhi-Rasoi/61591621570841/?ref=PROFILE_EDIT_xav_ig_profile_page_web" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center hover:-translate-y-1 transition-transform">
                 <FaFacebook />
               </a>
               <a href="https://www.instagram.com/tikhi_rasoi_/?hl=en" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#111] border border-white/5 text-gray-400 hover:text-white hover:bg-gold hover:scale-110 flex items-center justify-center transition-all shadow-lg hover:shadow-gold/20">

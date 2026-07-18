@@ -1,23 +1,63 @@
 import { motion } from 'framer-motion';
 import { FaLeaf, FaUtensils, FaUsers, FaHeart, FaStar, FaShieldAlt } from 'react-icons/fa';
 
-const FeatureCard = ({ icon: Icon, title, desc, delay }) => (
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  show: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 15
+    }
+  }
+};
+
+const leafAnimate = {
+  hover: { rotate: [0, -15, 15, -10, 10, 0], transition: { duration: 0.5 } }
+};
+
+const shieldAnimate = {
+  hover: { rotate: [0, -10, 10, -10, 10, 0], scale: 1.1, transition: { duration: 0.5 } }
+};
+
+const starAnimate = {
+  hover: { rotate: 360, scale: 1.15, transition: { duration: 0.8, ease: "easeOut" } }
+};
+
+const usersAnimate = {
+  hover: { y: [0, -6, 0, -3, 0], transition: { duration: 0.5 } }
+};
+
+const FeatureCard = ({ icon: Icon, title, desc, iconAnimate }) => (
   <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6, delay }}
-    className="bg-[#111] p-6 rounded-2xl border border-white/5 shadow-lg shadow-black/50 hover:bg-[#1a1a1a] transition-all group relative overflow-hidden"
+    variants={cardVariants}
+    whileHover="hover"
+    className="bg-[#111] p-6 rounded-2xl border border-white/5 shadow-lg shadow-black/50 hover:border-gold/30 hover:bg-[#161619] transition-all group relative overflow-hidden cursor-pointer"
   >
     <div className="absolute -top-10 -right-10 text-9xl text-white/5 group-hover:text-gold/5 transition-colors rotate-12">
       <Icon />
     </div>
     <div className="relative z-10">
       <div className="w-14 h-14 bg-gradient-to-br from-gold/20 to-gold/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-        <Icon className="text-2xl text-gold" />
+        <motion.div variants={iconAnimate} className="flex items-center justify-center w-full h-full text-gold">
+          <Icon className="text-2xl" />
+        </motion.div>
       </div>
-      <h4 className="text-white font-bold uppercase tracking-widest text-sm mb-2">{title}</h4>
-      <p className="text-sm text-gray-400 leading-relaxed">{desc}</p>
+      <h4 className="text-white font-bold uppercase tracking-widest text-sm mb-2 group-hover:text-gold transition-colors">{title}</h4>
+      <p className="text-sm text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">{desc}</p>
     </div>
   </motion.div>
 );
@@ -192,32 +232,38 @@ const About = () => {
             <h2 className="text-3xl md:text-4xl font-heading font-black text-white uppercase tracking-widest">Our Specialties</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
             <FeatureCard 
               icon={FaLeaf} 
               title="100% Pure Veg" 
               desc="A completely vegetarian kitchen ensuring purity and authentic taste in every bite." 
-              delay={0.1}
+              iconAnimate={leafAnimate}
             />
             <FeatureCard 
               icon={FaShieldAlt} 
               title="Hygiene First" 
               desc="Strict cleanliness and hygiene protocols followed to prepare your food safely." 
-              delay={0.2}
+              iconAnimate={shieldAnimate}
             />
             <FeatureCard 
               icon={FaStar} 
               title="Authentic Taste" 
               desc="Expert chefs crafting dishes with traditional recipes and premium spices." 
-              delay={0.3}
+              iconAnimate={starAnimate}
             />
             <FeatureCard 
               icon={FaUsers} 
               title="Family Friendly" 
               desc="A warm, cozy environment perfectly suited for family dinners and celebrations." 
-              delay={0.4}
+              iconAnimate={usersAnimate}
             />
-          </div>
+          </motion.div>
         </div>
 
         {/* Vision Section */}
